@@ -1,0 +1,14 @@
+{
+  "type": "external_account",
+  "audience": "//iam.googleapis.com/projects/442560373156/locations/global/workloadIdentityPools/github-actions-dev/providers/github-actions",
+  "subject_token_type": "urn:ietf:params:oauth:token-type:jwt",
+  "token_url": "https://sts.googleapis.com/v1/token",
+  "service_account_impersonation_url": "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/sa-name@davincibot-377306.iam.gserviceaccount.com:generateAccessToken",
+  "credential_source": {
+    "file": "y-tsuritani/Slackbot_ChatGPT/.github/workflows/clientLibraryConfig-github-actions.json",
+    "format": {
+      "type": "json",
+      "subject_token_field_name": "access_token"
+    }
+  }
+}
