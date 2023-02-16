@@ -34,4 +34,6 @@ GitHub Actions を用いた CI/CD の実現
 
 ### GCP
 
+### Terraform
+
 ## Architecture Documentation
