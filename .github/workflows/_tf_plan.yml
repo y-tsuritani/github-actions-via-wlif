@@ -1,4 +1,4 @@
-name: call terraform plan workflow
+name: caller terraform plan workflow
 on:
   workflow_call:
     inputs:
@@ -103,7 +103,7 @@ jobs:
         uses: rtCamp/action-slack-notify@v2.2.0
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_MESSAGE: "Slackbot_ChatGPT [${{ inputs.SLACK_MESSAGE_TARGET_ENV }}] terraform plan (${{ steps.plan.outcome }})"
+          SLACK_MESSAGE: "github-actions-via-wlif [${{ inputs.SLACK_MESSAGE_TARGET_ENV }}] terraform plan (${{ steps.plan.outcome }})"
 
       # workflow が失敗したとき
       - name: notice failed workflow
@@ -112,4 +112,4 @@ jobs:
         env:
           SLACK_COLOR: danger
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_MESSAGE: "Slackbot_ChatGPT [${{ inputs.SLACK_MESSAGE_TARGET_ENV }}] terraform plan (workflow failed)"
+          SLACK_MESSAGE: "github-actions-via-wlif [${{ inputs.SLACK_MESSAGE_TARGET_ENV }}] terraform plan (workflow failed)"

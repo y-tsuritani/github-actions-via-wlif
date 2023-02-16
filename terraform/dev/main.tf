@@ -5,8 +5,8 @@ provider "google" {
 
 # 使用するサービスアカウント
 resource "google_service_account" "func_service_account" {
-  account_id   = "sa-name"
-  display_name = "sa_name"
+  account_id   = "gcf-service-account"
+  display_name = "gcf-service-account"
   project      = var.project_id
   description  = "Cloud Functions が使用するサービスアカウント"
 }
@@ -15,8 +15,8 @@ resource "google_service_account" "func_service_account" {
 # Cloud Functions デプロイ用にソースコード zip ファイルを作成
 data "archive_file" "source_file_zip" {
   type        = "zip"
-  source_dir  = "../../applications/${var.function_name}/src"
-  output_path = "../../applications/${var.function_name}/${var.function_name}.zip"
+  source_dir  = "../../applications/src"
+  output_path = "../../applications/${var.function_name}.zip"
 }
 
 #### Cloud Functions 関連（デプロイ用 GCS バケット、オブジェクトの作成）
@@ -33,24 +33,6 @@ resource "google_storage_bucket_object" "source_object_zip" {
   source = data.archive_file.source_file_zip.output_path
 }
 
-#### Cloud Functions 関連（Secret Manager で管理している情報を環境変数として利用するための記述）
-
-# secret manager から SLACK_SIGNING_SECRET を取得する
-data "google_secret_manager_secret" "SLACK_SIGNING_SECRET" {
-  secret_id = "SLACK_SIGNING_SECRET"
-}
-
-# secret manager から SLACK_APP_TOKEN を取得する
-data "google_secret_manager_secret" "SLACK_BOT_TOKEN" {
-  secret_id = "SLACK_BOT_TOKEN"
-}
-
-# secret manager から OPENAI_API_KEY を取得する
-data "google_secret_manager_secret" "OPENAI_API_KEY" {
-  secret_id = "OPENAI_API_KEY"
-}
-
-
 #### Cloud Functions 関連（各関数をデプロイ）
 # アプリケーション を Cloud Functions へデプロイ
 resource "google_cloudfunctions2_function" "function" {
@@ -61,7 +43,7 @@ resource "google_cloudfunctions2_function" "function" {
   # ソースコード、言語、エントリーポイントを指定
   build_config {
     runtime     = "python310"
-    entry_point = "slack_bot"
+    entry_point = "hello_http"
     source {
       storage_source {
         bucket = google_storage_bucket.src_cloud_functions.name
@@ -76,26 +58,5 @@ resource "google_cloudfunctions2_function" "function" {
     timeout_seconds       = 300
     service_account_email = google_service_account.func_service_account.email
     # environment_variables = yamldecode(file("../applications/env/.env.yaml"))
-
-    # secret managerから情報を取得
-    secret_environment_variables {
-      key        = "SLACK_SIGNING_SECRET"
-      project_id = var.project_id
-      secret     = data.google_secret_manager_secret.SLACK_SIGNING_SECRET.secret_id
-      version    = "latest"
-    }
-    secret_environment_variables {
-      key        = "SLACK_BOT_TOKEN"
-      project_id = var.project_id
-      secret     = data.google_secret_manager_secret.SLACK_BOT_TOKEN.secret_id
-      version    = "latest"
-    }
-
-    secret_environment_variables {
-      key        = "OPENAI_API_KEY"
-      project_id = var.project_id
-      secret     = data.google_secret_manager_secret.OPENAI_API_KEY.secret_id
-      version    = "latest"
-    }
   }
 }

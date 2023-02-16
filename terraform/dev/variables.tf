@@ -1,6 +1,6 @@
 variable "project_id" {
   description = "GCP project id"
-  default     = "davincibot-377306"
+  default     = "github-actions-378014"
 }
 
 variable "region" {
