@@ -30,9 +30,17 @@ GitHub Actions を用いた CI/CD の実現
 
 ### Github Actions
 
+- [Google Cloud Platform での OpenID Connect の構成](https://docs.github.com/ja/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-google-cloud-platform)
+
+- [google-github-actions/auth](https://github.com/google-github-actions/auth)
+
 ### GCP
 
+- [ID 連携により有効期間の短い認証情報を取得する](https://cloud.google.com/iam/docs/using-workload-identity-federation?hl=ja&_ga=2.233113054.-1968687333.1670507126&_gac=1.215256677.1676447449.CjwKCAiA_6yfBhBNEiwAkmXy5-xm9Vce3Abxvg4ukdplah0zhKcjf9r3wymvAflSQXCU6oks7vwFxBoCKtkQAvD_BwE#terraform)
+
 ### Terraform
+
+- [Terraform Registry GitHub OIDC](https://registry.terraform.io/modules/terraform-google-modules/github-actions-runners/google/latest/submodules/gh-oidc#github-oidc)
 
 ## Architecture Documentation
 
@@ -45,11 +53,3 @@ GitHub Actions を用いた CI/CD の実現
 - [Workload Identity Federation を GitHub Actions で利用する](https://zenn.dev/amazyra/articles/workloadidentityfederation)
 
 - [Github Actions で secret を使う](https://qiita.com/inouet/items/c7d39ac4641c05eec4a0)
-
-- [ID 連携により有効期間の短い認証情報を取得する](https://cloud.google.com/iam/docs/using-workload-identity-federation?hl=ja&_ga=2.233113054.-1968687333.1670507126&_gac=1.215256677.1676447449.CjwKCAiA_6yfBhBNEiwAkmXy5-xm9Vce3Abxvg4ukdplah0zhKcjf9r3wymvAflSQXCU6oks7vwFxBoCKtkQAvD_BwE#terraform)
-
-- [Google Cloud Platform での OpenID Connect の構成](https://docs.github.com/ja/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-google-cloud-platform)
-
-- [google-github-actions/auth](https://github.com/google-github-actions/auth)
-
-- [Terraform Registry GitHub OIDC](https://registry.terraform.io/modules/terraform-google-modules/github-actions-runners/google/latest/submodules/gh-oidc#github-oidc)
