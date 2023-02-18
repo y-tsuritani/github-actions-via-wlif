@@ -1,8 +1,8 @@
 import functions_framework
-
+from flask import Request
 
 @functions_framework.http
-def hello_http(request):
+def hello_http(request: Request) -> str:
     """HTTP Cloud Function.
     Args:
         request (flask.Request): The request object.
