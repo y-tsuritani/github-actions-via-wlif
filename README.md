@@ -255,3 +255,7 @@ GitHub Actions を用いた CI/CD の実現
 - [GitHub Actions を使って Google Cloud 環境に Terraform を実行する方法](https://blog.g-gen.co.jp/entry/using-terraform-via-github-actions)
 
 - [Workload Identity Federation を図で理解する](https://christina04.hatenablog.com/entry/workload-identity-federation)
+
+- [github-script は便利です](https://qiita.com/bugfire/items/a2fa85fa58dd20322e3f)
+
+areokasii
