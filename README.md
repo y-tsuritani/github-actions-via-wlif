@@ -44,6 +44,162 @@ ID プールを作成するためには､名前が必要なので､適当に�
 借用するサービスアカウントを設定します｡サービスアカウントの作成方法については､この記事では割愛します｡
 [サービス アカウントの作成と管理](https://cloud.google.com/iam/docs/creating-managing-service-accounts?hl=ja)
 
+## GitHub Actions の作成
+
+`_tf_plan.yml`
+
+```yaml
+name: caller terraform plan workflow
+on:
+  workflow_call:
+    inputs:
+      SLACK_MESSAGE_TARGET_ENV:
+        type: string
+        required: true
+      TF_VERSION:
+        type: string
+        required: true
+      TF_WORK_DIR:
+        type: string
+        required: true
+    secrets:
+      SLACK_WEBHOOK:
+        required: true
+      WORKLOAD_IDENTITY_PROVIDER:
+        required: true
+      SERVICE_ACCOUNT:
+        required: true
+
+jobs:
+  tf_plan:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3.3.0
+
+      - name: authenticate to google cloud
+        uses: google-github-actions/auth@v1.0.0
+        with:
+          create_credentials_file: true
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT }}
+
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@v2.0.3
+        with:
+          terraform_version: ${{ inputs.TF_VERSION }}
+
+      - name: terraform init
+        id: init
+        working-directory: ${{ inputs.TF_WORK_DIR }}
+        run: |
+          terraform init
+
+      - name: terraform plan
+        id: plan
+        working-directory: ${{ inputs.TF_WORK_DIR }}
+        run: |
+          terraform plan -no-color
+        continue-on-error: true
+
+      # 1. PRのコメント欄に65536文字数制限がある
+      # 2. github-script もしくは GitHub Actions Workflow 内にも文字数制限がある
+      # よって、terraform plan/apply の結果を予め削る必要がある
+      # 大量に差分が出た場合は差分を見るのではなく plan/apply の成否を見たい
+      # これらを考慮して65000文字に制限する
+      - name: truncate terraform plan result
+        run: |
+          plan=$(cat <<'EOF'
+          ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
+          EOF
+          )
+          echo "PLAN<<EOF" >> $GITHUB_ENV
+          echo "${plan}" | grep -v 'Refreshing state' | tail -c 65000 >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: create comment from plan result
+        uses: actions/github-script@v6.4.0
+        if: github.event_name == 'pull_request'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`\n
+            ${ process.env.PLAN }
+            \`\`\`
+
+            </details>
+
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ inputs.TF_WORK_DIR }}\`, Workflow: \`${{ github.workflow }}\`*`;
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      # workflow が成功したとき
+      # terraform plan のステップで、continue-on-error: true としているので、
+      # plan がエラーになってもここのステップを通る
+      - name: notice completed workflow
+        uses: rtCamp/action-slack-notify@v2.2.0
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_MESSAGE: "github-actions-via-wlif [${{ inputs.SLACK_MESSAGE_TARGET_ENV }}] terraform plan (${{ steps.plan.outcome }})"
+
+      # workflow が失敗したとき
+      - name: notice failed workflow
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_COLOR: danger
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_MESSAGE: "github-actions-via-wlif [${{ inputs.SLACK_MESSAGE_TARGET_ENV }}] terraform plan (workflow failed)"
+```
+
+`tf_plan_dev.yml`
+
+```yaml
+name: caller terraform plan workflow (dev)
+on:
+  # pull_request:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'terraform/dev/**'
+  #   types:
+  #     - opened
+  #     - synchronize
+
+  # test用
+  push:
+    branches:
+      - develop
+
+jobs:
+  call_workflow:
+    # uses: y-tsuritani/Slackbot_ChatGPT.git/.github/workflows/_tf_plan.yml@main
+    # test用
+    uses: y-tsuritani/github-actions-via-wlif/.github/workflows/_tf_plan.yml@develop
+    with:
+      SLACK_MESSAGE_TARGET_ENV: dev
+      TF_VERSION: 1.3.4
+      TF_WORK_DIR: terraform/dev
+    secrets:
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.DEV_WORKLOAD_IDENTITY_PROVIDER }}
+      SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
+```
+
 ### 公式ドキュメント
 
 [GitHub Actions からのキーなしの認証の有効化](https://cloud.google.com/blog/ja/products/identity-security/enabling-keyless-authentication-from-github-actions)
@@ -98,4 +254,4 @@ GitHub Actions を用いた CI/CD の実現
 
 - [GitHub Actions を使って Google Cloud 環境に Terraform を実行する方法](https://blog.g-gen.co.jp/entry/using-terraform-via-github-actions)
 
-- [Workload Identity Federationを図で理解する](https://christina04.hatenablog.com/entry/workload-identity-federation)
+- [Workload Identity Federation を図で理解する](https://christina04.hatenablog.com/entry/workload-identity-federation)
