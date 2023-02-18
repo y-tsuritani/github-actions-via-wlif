@@ -74,6 +74,8 @@ GitHub Actions を用いた CI/CD の実現
 
 - [ID 連携により有効期間の短い認証情報を取得する](https://cloud.google.com/iam/docs/using-workload-identity-federation?hl=ja&_ga=2.233113054.-1968687333.1670507126&_gac=1.215256677.1676447449.CjwKCAiA_6yfBhBNEiwAkmXy5-xm9Vce3Abxvg4ukdplah0zhKcjf9r3wymvAflSQXCU6oks7vwFxBoCKtkQAvD_BwE#terraform)
 
+[Workload Identity プールとプロバイダを管理する](https://cloud.google.com/iam/docs/manage-workload-identity-pools-providers?hl=ja)
+
 ### Terraform
 
 - [Terraform Registry GitHub OIDC](https://registry.terraform.io/modules/terraform-google-modules/github-actions-runners/google/latest/submodules/gh-oidc#github-oidc)
