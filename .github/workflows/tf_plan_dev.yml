@@ -1,11 +1,11 @@
 name: caller terraform plan workflow (dev)
 on:
   pull_request:
-    branches:
-      - 'main'
-    paths:
-      - 'terraform/dev/**'
-    types: [opened, synchronize]
+    # branches:
+    #   - main
+    # paths:
+    #   - 'terraform/dev/**'
+    types: [opened, reopened, synchronize]
 
   # test用
   # push:
