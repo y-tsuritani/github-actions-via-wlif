@@ -257,3 +257,5 @@ GitHub Actions を用いた CI/CD の実現
 - [Workload Identity Federation を図で理解する](https://christina04.hatenablog.com/entry/workload-identity-federation)
 
 - [github-script は便利です](https://qiita.com/bugfire/items/a2fa85fa58dd20322e3f)
+
+areokasii
