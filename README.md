@@ -261,3 +261,4 @@ GitHub Actions を用いた CI/CD の実現
 - [github-script は便利です](https://qiita.com/bugfire/items/a2fa85fa58dd20322e3f)
 
 areokasii
+test
