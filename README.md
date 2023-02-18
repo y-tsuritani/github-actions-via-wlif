@@ -78,6 +78,8 @@ GitHub Actions を用いた CI/CD の実現
 
 - [サービス アカウントの権限借用](https://cloud.google.com/iam/docs/workload-identity-federation?hl=ja#impersonation)
 
+- [IAM permissions reference](https://cloud.google.com/iam/docs/permissions-reference)
+
 ### Terraform
 
 - [Terraform Registry GitHub OIDC](https://registry.terraform.io/modules/terraform-google-modules/github-actions-runners/google/latest/submodules/gh-oidc#github-oidc)
